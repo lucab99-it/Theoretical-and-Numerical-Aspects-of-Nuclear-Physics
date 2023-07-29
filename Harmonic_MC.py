@@ -60,6 +60,37 @@ def MCAverage(G,N,epsilon,N_cor, N_cf,f=getG,a=0.5):
         G_errors[n] = (G_errors[n]-avg_G[n]**2)/N_cf
     return avg_G, G_errors
 
+#The following function performs the binning of an array G in bins of size binsize. It returns
+#an array of size len(G)/binsize containing the averaged value of the elements of G in each bin.
+
+def bin (G, binsize): #function that does the binning of the array G
+    G_binned = []
+    for i in range(0,len(G),binsize):
+        G_avg = 0
+        for j in range (0, binsize):
+            if i+j<len(G):
+                G_avg += G[i+j]
+        G_binned.append(G_avg/binsize)
+    return G_binned
+
+#The following function takes as input an array G and performs a "bootstrap copy" of G.
+#It returns an array G_bootstrap which contains exactly len(G) elements which are randomly
+#sampled from G.
+
+def bootstrap(G):
+    N_cf = len(G)
+    G_bootstrap = [] # new array of configurations
+    for i in range(0,N_cf):
+        alpha = int(N_cf * np.random.rand()) # choose random configuration from G
+        G_bootstrap.append(G[alpha])
+    return G_bootstrap
+
+#The following function computes the energy gap and statistical errors.
+#It takes as input the array G of MC averaged values of G,
+# array G_errors of statistical errors on G, the total number of configurations N_cf
+#and the (optional) lattice spacing a. It returns three arrays: dE of energy gaps for each n,
+# deltaE of statistical errors computed as propagation of error from G_errors
+#and deltaE_graph of errorbars for a graph which are scaled up for display purposes only and are not reliable.
 
 def DeltaE (G, G_errors,N_cf,a=0.5):
     N = len(G)

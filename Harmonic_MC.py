@@ -57,7 +57,7 @@ def MCAverage(G,N,epsilon,N_cor, N_cf,f=getG,a=0.5):
             avg_G[n]+=G[alpha][n] #computes the average
             G_errors[n] += (G[alpha][n])**2/N_cf  #computes the error
         avg_G[n] = avg_G[n]/N_cf
-        G_errors[n] = (G_errors[n]-avg_G[n]**2)/N_cf
+        G_errors[n] = np.sqrt((G_errors[n]-avg_G[n]**2)/N_cf)
     return avg_G, G_errors
 
 #The following function performs the binning of an array G in bins of size binsize. It returns
@@ -100,5 +100,4 @@ def DeltaE (G, G_errors,N_cf,a=0.5):
     for n in range (N):
         dE[n] =np.log(np.abs(G[n]/G[(n+1)%N]))/a # compute energy gap as a*dE_n =ln(G_n/G_(n+1))
         deltaE[n] = np.abs(G_errors[n]/G[n] - G_errors[(n+1)%N]/G[(n+1)%N])/a #compute error bars on dE
-        deltaE_graph[n] = (N_cf/100)* deltaE[n] #errorbars for the graph, for display purposes only, much higher than the real ones
-    return dE , deltaE, deltaE_graph
+    return dE , deltaE

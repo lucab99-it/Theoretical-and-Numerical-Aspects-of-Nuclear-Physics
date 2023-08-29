@@ -13,10 +13,10 @@ g = np.zeros((N_cf,N))
 G, G_errors =MCAverage(g,N,epsilon,N_cor,N_cf) # MC average and statistical error of G
 
 #Compute the energy gap at time tn for each n and the corresponding error
-dE, deltaE, deltaE_graph = DeltaE(G,G_errors,N_cf)
+dE, deltaE = DeltaE(G,G_errors,N_cf)
 
 fig = plt.figure()
-l1 = plt.errorbar(t,dE,yerr= deltaE_graph, ecolor = 'r', capsize=5, label=r'$\Delta E (t)$', marker = '.', linestyle = 'none') #plot the numerical values
+l1 = plt.errorbar(t,dE,yerr= deltaE, ecolor = 'r', capsize=5, label=r'$\Delta E (t)$', marker = '.', linestyle = 'none') #plot the numerical values
 l2 = plt.plot(t,np.ones(N), label = r'$\Delta E(\infty)$', linestyle = 'dotted') #asymptotic value of dE
 plt.axis([-0.1,3,0,2])
 plt.xlabel('t')

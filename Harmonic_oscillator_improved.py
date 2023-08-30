@@ -17,17 +17,18 @@ def D(x,j):
     return (x[jp]-2*x[j]+x[jm])/(a**2)
 
 #Square of the second-derivative operator acting on x
-def D2 (x,j):
-    jp = (j+1)%N
-    jp2 = (j+2)%N
-    jm = (j-1)%N
-    jm2 = (j-2)%N
-    return (-x[jp2]+16*x[jp]-30*x[j]+16*x[jm]-x[jm2])/(a**2)
+#def D2 (x,j):
+#    jp = (j+1)%N
+#    jp2 = (j+2)%N
+#    jm = (j-1)%N
+#    jm2 = (j-2)%N
+#    return (-x[jp2]+16*x[jp]-30*x[j]+16*x[jm]-x[jm2])/(a**2)
 
 
 #Improved Euclidean action for numerical calculations involving x[j] for a m=1 particle
 def S_imp(x,j):
-    return a*(-1/2*x[j]*(D(x,j)-(a**2)*D2(x,j)/12)+a*V(x[j]))
+    Dx = [D(x,k) for k in range(len(x))]
+    return a*(-1/2*x[j]*(D(x,j)-(a**2)*D(Dx,j)/12)+a*V(x[j]))
 
 
 #Improved update function
@@ -71,12 +72,12 @@ binsize = int(N_cf/100)
 g = np.zeros((N_cf,N))
 G, G_errors =MCAverage_imp(g,N,epsilon,N_cor,N_cf,binsize)
 
-dE,deltaE,deltaE_graph = DeltaE(G,G_errors, N_cf)
+dE,deltaE = DeltaE(G,G_errors, N_cf)
 
 fig = plt.figure()
-l1 = plt.errorbar(t,dE,yerr= deltaE_graph, ecolor = 'r', capsize=5, label=r'$\Delta E (t)$', marker = '.', linestyle = 'none')
+l1 = plt.errorbar(t,dE,yerr= deltaE, ecolor = 'r', capsize=5, label=r'$\Delta E (t)$', marker = '.', linestyle = 'none')
 l2 = plt.plot(t,np.ones(N), label = r'$\Delta E(\infty)$', linestyle = 'dotted')
-plt.axis([-0.2,3.2,0,3])
+#plt.axis([-0.2,3.2,0,3])
 plt.xlabel('t')
 plt.ylabel('$\Delta E$')
 plt.legend(loc='upper right')

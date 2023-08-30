@@ -24,7 +24,7 @@ for n in range(100):
     w_exp[n] = w0[n]*np.sqrt(1+(a*w0[n])**4/90)
 
 fig = plt.figure()
-l1=plt.plot(w0,w_exp,label = 'Expexted w', linestyle = 'dotted')
+l1=plt.plot(w0,w_exp,label = r'$\omega_0 \sqrt{1+\frac{(a\omega_0)^4}{90}}$', linestyle = 'dotted')
 l2 = plt.plot(w0,w_sol, label = 'Numerical solution', linestyle='none', marker = '.')
 plt.xlabel(r'$\omega_0$')
 plt.ylabel('$\omega$')

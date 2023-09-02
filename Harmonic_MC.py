@@ -80,8 +80,8 @@ def bin (G, binsize): #function that does the binning of the array G
 def bootstrap(G):
     N_cf = len(G)
     G_bootstrap = [] # new array of configurations
-    for i in range(0,N_cf):
-        alpha = int(N_cf * np.random.rand()) # choose random configuration from G
+    for _ in range(0,N_cf):
+        alpha = np.random.randint(0,N_cf) # choose random configuration from G
         G_bootstrap.append(G[alpha])
     return G_bootstrap
 
@@ -92,11 +92,10 @@ def bootstrap(G):
 # deltaE of statistical errors computed as propagation of error from G_errors
 #and deltaE_graph of errorbars for a graph which are scaled up for display purposes only and are not reliable.
 
-def DeltaE (G, G_errors,N_cf,a=0.5):
+def DeltaE (G, G_errors,a=0.5):
     N = len(G)
     dE = np.zeros(N) #energy gap
     deltaE = np.zeros(N) #errors on dE
-    deltaE_graph = np.zeros(N) # erorbars for the graph
     for n in range (N):
         dE[n] =np.log(np.abs(G[n]/G[(n+1)%N]))/a # compute energy gap as a*dE_n =ln(G_n/G_(n+1))
         deltaE[n] = np.abs(G_errors[n]/G[n] - G_errors[(n+1)%N]/G[(n+1)%N])/a #compute error bars on dE

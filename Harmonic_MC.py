@@ -23,7 +23,7 @@ def update(x,epsilon,a=0.5):
     for j in range(len(x)):
         x_old=x[j]
         S_old = S(x,j,a=a)
-        x[j]+= 2*epsilon*np.random.rand()-epsilon #modifies the position of x(tj)
+        x[j]+= np.random.uniform(-epsilon, epsilon) #modifies the position of x(tj)
         dS =S(x,j)-S_old #variation of the action
         if dS>0 and np.exp(-dS)<np.random.rand(): #updates x(tj) only if dS<0 (more probable path) or if e^(-dS)<uniform(0,1)
             x[j] = x_old
@@ -57,7 +57,7 @@ def MCAverage(G,N,epsilon,N_cor, N_cf,f=getG,a=0.5):
             avg_G[n]+=G[alpha][n] #computes the average
             G_errors[n] += (G[alpha][n])**2/N_cf  #computes the error
         avg_G[n] = avg_G[n]/N_cf
-        G_errors[n] = np.sqrt((G_errors[n]-avg_G[n]**2)/N_cf)
+        G_errors[n] = np.sqrt((G_errors[n]-(avg_G[n])**2)/N_cf)
     return avg_G, G_errors
 
 #The following function performs the binning of an array G in bins of size binsize. It returns
@@ -77,12 +77,12 @@ def bin (G, binsize): #function that does the binning of the array G
 #It returns an array G_bootstrap which contains exactly len(G) elements which are randomly
 #sampled from G.
 
-def bootstrap(G):
+def bootstrap(G, N):
     N_cf = len(G)
-    G_bootstrap = [] # new array of configurations
-    for _ in range(0,N_cf):
-        alpha = np.random.randint(0,N_cf) # choose random configuration from G
-        G_bootstrap.append(G[alpha])
+    G_bootstrap = np.zeros((N_cf,N)) # new array of configurations
+    for k in range(N_cf):
+        alpha = int(np.random.uniform(0,N_cf)) # choose random configuration from G
+        G_bootstrap[k] = G[alpha]
     return G_bootstrap
 
 #The following function computes the energy gap and statistical errors.
@@ -96,7 +96,7 @@ def DeltaE (G, G_errors,a=0.5):
     N = len(G)
     dE = np.zeros(N) #energy gap
     deltaE = np.zeros(N) #errors on dE
-    for n in range (N):
-        dE[n] =np.log(np.abs(G[n]/G[(n+1)%N]))/a # compute energy gap as a*dE_n =ln(G_n/G_(n+1))
-        deltaE[n] = np.abs(G_errors[n]/G[n] - G_errors[(n+1)%N]/G[(n+1)%N])/a #compute error bars on dE
+    for n in range (N-1):
+        dE[n] =np.log(np.abs(G[n]/G[(n+1)]))/a # compute energy gap as a*dE_n =ln(G_n/G_(n+1))
+        deltaE[n] = np.sqrt((G_errors[n]/(a*G[n]))**2 + (G_errors[n+1]/(a*G[n+1]))**2)
     return dE , deltaE

@@ -9,11 +9,7 @@ Npoints = 100
 t = np.linspace(0, T, N) #time axis
 Option = 'Improved'
 w0=np.linspace(0,4,Npoints) #known frequency of the oscillator
-w_sol = np.zeros(100)
-w_exp = np.zeros(100)
-w_sol_imp = np.zeros(100)
-w_exp_imp = np.zeros(100)
-w_guess = w0
+
 
 def SystemMatrix(w0):
     M = np.zeros((N,N))

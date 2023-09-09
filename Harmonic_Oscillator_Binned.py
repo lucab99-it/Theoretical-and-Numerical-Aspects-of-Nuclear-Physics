@@ -9,7 +9,7 @@ t= np.linspace(0,T,N) #time axis
 epsilon = 1.4 #range for updating x
 N_cor = 1 #Number of discarded updates before any evaluation of G, we run a highly-correlated one to see if binning helps
 N_cf = 10000 #total number of configurations
-binsize = int(N_cf/20) #we choose the bin size so that we have about 50 bins
+binsize = 20 #we choose the bin size so that we have about 50 bins
 
 #The following function computes the MC average of G, once it has been binned. It takes as input a 2D array G,
 #the number of sites N, the update range epsilon, the number of correlated configurations N_cor
@@ -44,8 +44,8 @@ g=np.zeros((N_cf,N))
 Gbin, Gbin_errors = MCAverageBin(gbin,N,epsilon,N_cor,N_cf,binsize)
 G, G_errors = MCAverage(g,N,epsilon,N_cor,N_cf)
 
-dE_bin, deltaE_bin  = DeltaE(Gbin,Gbin_errors,N_cf) #compute dE and statistical error in binned case
-dE, deltaE =DeltaE(G,G_errors,N_cf) #compute dE and statistical error in non-binned case
+dE_bin, deltaE_bin  = DeltaE(Gbin,Gbin_errors) #compute dE and statistical error in binned case
+dE, deltaE =DeltaE(G,G_errors) #compute dE and statistical error in non-binned case
 
 
 fig = plt.figure()

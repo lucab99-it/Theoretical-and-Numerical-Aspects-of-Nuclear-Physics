@@ -1,0 +1,6 @@
+Code Dependencies:
+ 
+numpy
+vegas
+scipy
+matplotlib

@@ -7,7 +7,7 @@ N = 20 #total lattice sites
 T = a*N #total time
 Npoints = 100
 t = np.linspace(0, T, N) #time axis
-improved = True
+improved = False
 w0=np.linspace(0.2,4,Npoints) #known frequency of the oscillator
 
 #The following function defines the matrix associated with the discretization of the
@@ -50,26 +50,26 @@ def SystemMatrixImproved(w0):
     return M
 
 #The following function solves the linear system Mx = h where M is the matrix of the unimproved second derivative,
-# and h is a length-N array, h = [-x0,0...,0,xN] where x0 and xN are passed as inputs, together with the oscillator frequency w0.
+# and h is a length-N array, h = [-xm1,0...,0,-xN] where xm1 and xN are passed as inputs, together with the oscillator frequency w0.
 #It returns an array x solution to the aforementioned system.
-def Solve(w0,x0, xN):
+def Solve(w0,xm1, xN):
     h = np.zeros(N)
-    h[0] = -x0
-    h[-1] = xN
+    h[0] = -xm1
+    h[-1] = -xN
     M = SystemMatrix(w0)
     x = np.linalg.solve(M,h)
     return x
 
 #The following function solves the linear system Mx = h where M is the matrix of the improved second derivative and
-# h is a length-N array, h = [(1/12 x1-4/3 x0),(1/12)x0,0...,0,1/12 xN,(1/12 xNm1-4/3 xN)]
-# where x0,x1,xNm1 and xN are passed as inputs, together with the oscillator frequency w0.
+# h is a length-N array, h = [(1/12 xm2-4/3 xm1),(1/12)xm1,0...,0,1/12 xN,(1/12 xNp1-4/3 xN)]
+# where xm1,xm2,xNp1 and xN are passed as inputs, together with the oscillator frequency w0.
 #It returns an array x solution to the aforementioned system.
-def SolveImproved(w0,x0,x1,xNm1,xN):
+def SolveImproved(w0,xm1,xm2,xNp1,xN):
     h = np.zeros(N)
-    h[0]=(1/12)*x1-(4/3)*x0
-    h[1] = x0*(1/12)
+    h[0]=(1/12)*xm2-(4/3)*xm1
+    h[1] = xm1*(1/12)
     h[N-2] = xN*(1/12)
-    h[N-1] = (1/12)*xNm1-(4/3)*xN
+    h[N-1] = (1/12)*xNp1-(4/3)*xN
     M = SystemMatrixImproved(w0)
     x = np.linalg.solve(M,h)
     return x
@@ -103,17 +103,17 @@ def HarmonicOscillatorSolution(w0,improved, Npoints=100):
     x_sol = np.zeros((Npoints,N))
     w_sol = np.zeros(Npoints)
     w_exp = np.zeros(Npoints)
-    x0 = np.exp(0) #x0 = e^(-w*0), initial point of the lattice
+    xm1 = np.exp(0) #xm1 = e^(-w*0), initial point of the lattice
     for k in range(Npoints):
         xN = np.exp(-w0[k]*T)#xN = e^(-w*T) final point of the lattice
         if improved:
-            x1 = np.exp(w0[k]*a)#for improved case we consider x1= e^(-w*(-a))
-            xNm1 = np.exp(-w0[k]*(T-a))# xNm1 = e^(-w*(T-a))
-            x_sol[k] = SolveImproved(w0[k],x0,x1,xNm1,xN)
+            xm2 = np.exp(w0[k]*a)#for improved case we consider xm2= e^(-w*(-a))
+            xNp1 = np.exp(-w0[k]*(T-a))# xNp1 = e^(-w*(T-a))
+            x_sol[k] = SolveImproved(w0[k],xm1,xm2,xNp1,xN)
             w_exp[k] = w0[k]*np.sqrt(1+((a*w0[k])**4)/90)
 
         else:
-            x_sol[k] = Solve(w0[k], x0, xN)
+            x_sol[k] = Solve(w0[k], xm1, xN)
             w_exp[k] = w0[k]*np.sqrt(1-((a*w0[k])**2)/12)
 
 #Fitting the solution with the exponential function to retrieve w_sol
